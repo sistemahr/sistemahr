@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Principal</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="images/icon-152.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="white" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Sistema Visitas">
+    <meta name="msapplication-TileImage" content="images/icon-144.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/semantic.min.js"></script>
+    <script src="lib/moment-with-locales.min.js"></script>
+    <script src="lib/simpleUpload.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/semantic.min.css">
+
+    <style type="text/css">
+        body {
+            background-color: #bbbbbb;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .column {
+            margin: 10px;
+        }
+
+        .selpac {
+            margin: 0 15px 0;
+        }
+
+        .col_cal {
+            margin-top: 0;
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        div.scrollable {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #factura_file1 {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background-color: white;
+            border: 4px dashed #B5B5B5;
+            color: #B5B5B5;
+            font-size: 50px;
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui borderless menu">
+        <div class="header item">
+            <i class="large home icon"></i>
+            Sistema AT
+        </div>
+        <div class="right menu">
+            <a href="bienvenido.html" class="ui item">
+                <!-- <i class="icon large question outline"></i> -->
+
+                <i class="large question icon"></i>
+            </a>
+            <a href="profile.html" class="ui item">
+                <i class="icon large cog"></i>
+            </a>
+            <a id="logoutBtn" href="#" class="ui item">
+                <i class="sign out large alternate icon"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="container selpac">
+        <div class="field">
+            <h3>Seleccione un paciente</h3>
+            <select id="selectpac" class="ui fluid dropdown">
+                <option Value="0">Todos los pacientes</option>
+            </select>
+        </div>
+    </div>
+    <div class="scrollable">
+        <div class="ui middle aligned center aligned grid calendario">
+            <div class="column col_cal">
+                <div class="ui calendar" id="inline_calendar"></div>
+                <div class="ui secondary menu">
+                    <div class="item prevmonth">
+                        <i class="left circular inverted chevron icon"></i>
+                    </div>
+                    <div class="center aligned item">
+                        <h3 class="ui center aligned header"></h3>
+                    </div>
+                    <div class="right aligned item nextmonth">
+                        <i class="right circular inverted chevron icon"></i>
+                    </div>
+                </div>
+
+                <div class="ui segment">
+                    <h5 id="summarioHoras">Total de horas: 63hs Total: $23.940,00</h5>
+                    <p id="summarioHoras1">ds:<b>16.5</b> - fs:<b>12.5</b> - fe:<b>0</b></p>
+
+                    <div class="ui huge buttons sumario">
+                        <button id="presentar_horarios" class="ui red button"><i
+                                class="calendar outline icon"></i></button>
+                        <button id="presentar_factura" class="ui blue button"><i
+                                class="file invoice outline icon"></i></button>
+                        <button id="presentar_informe" class="ui green button"><i
+                                class="edit outline icon"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="ui grid calendario tipotarea">
+            <div class="column">
+                <div class="ui calendar" id="inline_calendar"></div>
+
+                <div class="ui icon message" style="display: none;">
+                    <i class="lock icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            Este mes esta cerrado
+                        </div>
+                        <p>Este mes esta listo para la liquidacion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="importante_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Importante
+        </div>
+        <div class="content">
+            <div class="ui warning message">
+                <div class="header">
+                    Importante
+                </div>
+                <div class="content">
+                    <p>Debera presentar los horarios correspondientes al mes de Octubre. </p>
+                    <p>El plazo es del 1 al 5 de este mes para presentar las visitas correspondientes al mes de Octubre.
+                    </p>
+                    <p>En caso de pasada esa fecha, los honorarios seran liquidados a partir del 15 del mes siguiente.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                Entendido
+            </div>
+        </div>
+    </div>
+
+    <div id="presentacion_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Presentacion Horaria
+        </div>
+        <div id="presentacion_horaria_content" class="content">
+            <h4>Se realizara la presentacion horaria correspondiente al mes de Octubre 2020.</h4>
+            <p>Se cuenta con un total de 63hs. repartidas entre: </p>
+            <ul>
+                <li>40hs. DS x 380 = <strong>$1560</strong></li>
+                <li>23hs. FS x 400 = <strong>$1560</strong></li>
+            </ul>
+            <div class="ui divider"></div>
+            <h3>Total: $23.940,00</h3>
+            <h4>Debera realizar la factura con este importe.</h4>
+            <div class="ui error message">
+                <div class="header">
+                    Aviso
+                </div>
+                <div class="content">
+                    <p>Se realizara la presentacion horaria, una vez confirmada no se podran actualizar ni editar
+                        las
+                        visitas del mes.<br>
+                        Para pedir una rectificacion debera comunicarse con el administrador.</p>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                Cancelar
+            </div>
+            <div class="ui positive button">
+                Confirmar
+            </div>
+        </div>
+    </div>
+
+    <div id="factura_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Carga de factura
+        </div>
+        <div class="content">
+            <h3>La factura correspondiente a Octubre 2020 debera tener un importe de:</h3>
+            <h2>$23.940,00</h2>
+
+            <form id="formUpload" action="ajaxupload.php" method="post" enctype="multipart/form-data">
+                <input class="ui input" id="factura_file" type="file" accept="image/*,application/pdf" name="facfile" />
+                <!-- <input class="ui primary button" type="submit" value="Subir"> -->
+            </form>
+
+            <div class="ui warning message">
+                <div class="header">
+                    Nota
+                </div>
+                <div class="content">
+                    <p>La carga de la factura se puede realizar varias veces pero se podra confirmar una sola vez.</p>
+                    <p>En caso que se necesite volver a cargar la factura despues de confirmar debera comunicarse cone
+                        el administrador para habilitar la recarga.</p>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                Cerrar
+            </div>
+        </div>
+    </div>
+
+    <div id="informe_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Carga de informe - Octubre 2020
+        </div>
+        <div class="content">
+            <div class="ui form">
+                <div class="field">
+                    <label>Ingresar informe evolutivo del mes del paciente.</label>
+                    <textarea></textarea>
+                </div>
+            </div>
+
+            <div class="ui warning message">
+                <div class="header">
+                    Nota
+                </div>
+                <div class="content">
+                    <p>En caso que se necesite volver a cargar el informe debera comunicarse con el administrador para
+                        habilitar la carga.</p>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui button">
+                Cancelar
+            </div>
+            <div class="ui positive button">
+                Confirmar
+            </div>
+        </div>
+    </div>
+
+    <div id="confirma_salir_dlg" class="ui modal">
+        <div class="header">
+            Advertencia
+        </div>
+        <div class="content">
+            <div class="description">
+                <h2>&iquest;Desea cerrar sesion&#63;</h2>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                Cancelar
+            </div>
+            <div class="ui positive button">
+                Confirmar
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = "https://www.conectat.com.ar/api";
+        let pac = null;
+        let focusDate = null;
+        let presentationData = null;
+
+        $(document).ready(function () {
+            //Inicializamos los controles
+            $('.calendario').hide();
+            //$('.sumario').hide();
+            $('.ui.dropdown').dropdown();
+
+            //Si selecciono fecha, la guardamos
+            if (localStorage.getItem("focusDate") === null) {
+                focusDate = moment();
+            } else {
+                focusDate = moment(localStorage.getItem("focusDate"));
+            }
+
+            //Si selecciono fecha, la guardamos
+            if (localStorage.getItem("pac") !== null) {
+                pac = localStorage.getItem("pac");
+            }
+
+            $('#inline_calendar').calendar('set date', focusDate._d);
+            getTotalMonth(focusDate._d);
+
+            cargarPacientes();
+
+            //cargarVisitasCalendario();
+            $("#confirma_salir_dlg").modal({
+                onShow: function () {
+                },
+                onDeny: function () {
+                    return true;
+                },
+                onApprove: function () {
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("focusDate");
+                    localStorage.removeItem("pac");
+                    window.location.href = "login.html";
+                    return true;
+                }
+            });
+
+            $("#presentacion_modal_dlg").modal({
+                onShow: function () {
+                    let presentacionHorariaContent = `<h4>Se realizara la presentacion horaria correspondiente al mes de Octubre 2020.</h4>
+                                                      <p>Se cuenta con un total de ${presentationData["total_hs"]}hs. repartidas entre: </p>
+                                                      <ul>
+                                                          <li>${presentationData["total_hs_ds"]}hs. DS x ${presentationData["valor_hora_ds"]} = <strong>$${presentationData["total_pagar_ds"]}</strong></li>
+                                                          <li>${presentationData["total_hs_fs"]}hs. FS x ${presentationData["valor_hora_fs"]} = <strong>$${presentationData["total_pagar_fs"]}</strong></li>
+                                                          <li>${presentationData["total_hs_fe"]}hs. FE x ${presentationData["valor_hora_fe"]} = <strong>$${presentationData["total_pagar_fe"]}</strong></li>
+                                                      </ul>
+                                                      <div class="ui divider"></div>
+                                                      <h3>Total: $${presentationData["total_pagar"]}</h3>
+                                                      <h4>Debera realizar la factura con este importe.</h4>
+                                                      <div class="ui error message">
+                                                          <div class="header">
+                                                              Aviso
+                                                          </div>
+                                                          <div class="content">
+                                                              <p>Se realizara la presentacion horaria, una vez confirmada no se podran actualizar ni editar
+                                                                  las
+                                                                  visitas del mes.<br>
+                                                                  Para pedir una rectificacion debera comunicarse con el administrador.</p>
+                                                          </div>
+                                                      </div>`;
+                    presentacionHorariaContent = presentacionHorariaContent.replace(/\./g, ',');
+
+                    $("#presentacion_horaria_content").html(presentacionHorariaContent);
+                },
+                onDeny: function () {
+                    return true;
+                },
+                onApprove: function () {
+                    enviarPresentacion();
+                    return true;
+                }
+            });
+
+            $("#selectpac").on("change", function (e) {
+                let optionSelected = $("option:selected", this);
+                let valueSelected = this.value;
+                pac = valueSelected;
+
+                localStorage.setItem("pac", pac);
+
+                if (valueSelected == "0") {
+                    $('.calendario').show();
+                    cargarVisitasCalendario(null);
+                } else {
+                    $('.calendario').hide();
+                    cargarVisitasCalendario(valueSelected);
+                }
+            });
+
+            $("#presentar_horarios").click(function () {
+                $('#presentacion_modal_dlg').modal('show');
+            });
+
+            $("#presentar_factura").click(function () {
+                $('#factura_modal_dlg').modal('show');
+            });
+
+            $("#presentar_informe").click(function () {
+                $('#informe_modal_dlg').modal('show');
+            });
+
+            $("#logoutBtn").click(function () {
+                $("#confirma_salir_dlg").modal("show");
+            });
+
+            $(".nextmonth").click(function (e) {
+                e.preventDefault();
+                let hoy = new Date();
+                //let curDate = $('#inline_calendar').calendar('get focusDate');
+                focusDate = moment(focusDate).add(1, 'M');
+
+                localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
+
+                //Si es mayor al mes actual salimos
+                if (moment(focusDate).isAfter(hoy, 'day')) {
+                    //focusDate = moment(focusDate).subtract(1, 'M');
+                    focusDate = moment(hoy);
+                    $('#inline_calendar').calendar('set focusDate', focusDate._d);
+                    $('#inline_calendar').calendar('set date', focusDate._d);
+                    $('.sumario').hide();
+                    return;
+                }
+
+                if (moment(focusDate).isSameOrBefore(hoy, 'day')) {
+                    $('.sumario').show();
+                    $('#inline_calendar').calendar('set focusDate', focusDate._d);
+                    $('#inline_calendar').calendar('set date', focusDate._d);
+                    getTotalMonth(focusDate._d);
+                    if (moment(focusDate).isSame(hoy, 'day')) {
+                        $('.sumario').hide();
+                    }
+                } else {
+                    $('.sumario').hide();
+                }
+            });
+
+            $(".prevmonth").click(function (e) {
+                e.preventDefault();
+                let hoy = new Date();
+                //let curDate = $('#inline_calendar').calendar('get focusDate');
+                focusDate = moment(focusDate).subtract(1, 'M');
+
+                localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
+
+                if (moment(focusDate).isBefore(hoy, 'day')) {
+                    $('.sumario').show();
+                    $('#inline_calendar').calendar('set focusDate', focusDate._d);
+                    $('#inline_calendar').calendar('set date', focusDate._d);
+                    getTotalMonth(focusDate._d);
+
+                } else {
+                    $('.sumario').hide();
+                }
+            });
+
+            /*
+                        if ('serviceWorker' in navigator) {
+                            navigator.serviceWorker
+                                .register('./sw.js');
+                        }
+                        */
+
+            $('#factura_file').change(function () {
+                let url = `${apiUrl}/facupload.php`;
+                let user = JSON.parse(localStorage.getItem('user'));
+
+                let jwtString = `Bearer ${user.jwt}`;
+
+                $(this).simpleUpload(url, {
+                    data: {
+                        "id": presentationData.id,
+                        "mes": presentationData.mes,
+                        "anio": presentationData.anio
+                    },
+                    beforeSend: function (jqXHR, settings) {
+                        jqXHR.setRequestHeader('MyAuthorization', jwtString);
+                    },
+                    start: function (file) {
+                        //upload started
+                        console.log("upload started");
+                    },
+
+                    progress: function (progress) {
+                        //received progress
+                        console.log("upload progress: " + Math.round(progress) + "%");
+                    },
+
+                    success: function (data) {
+                        //upload successful
+                        console.log("upload successful!");
+                        console.log(data);
+                    },
+
+                    error: function (error) {
+                        //upload failed
+                        console.log("upload error: " + error.name + ": " + error.message);
+                    }
+
+                });
+
+            });
+
+        });
+
+        function cargarPacientes() {
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            let jwtString = `Bearer ${user.jwt}`;
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("MyAuthorization", jwtString);
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/pacientes.php?at=${user.id}`;
+
+            //*****************************************
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    if (data.message != undefined) {
+                        localStorage.removeItem("user");
+                        window.location.href = "login.html";
+                    }
+                    let select = document.getElementById("selectpac");
+
+                    select.innerHTML = '<option Value="0">Todos los pacientes</option>';
+                    for (i in data) {
+                        let elementTxt = `<option Value="${data[i].id_pac}">${data[i].iniciales}</option>`;
+                        select.innerHTML += elementTxt;
+                    }
+
+                    //Si recupero el paciente , lo seleccionamos de la lista
+                    if (pac != null) {
+                        $('.ui.dropdown').dropdown("set value", pac);
+                    }
+                    //cargarVisitasCalendario();
+                    return;
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        function cargarVisitasCalendario(pac) {
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            $('.calendario').hide();
+            let jwtString = `Bearer ${user.jwt}`;
+
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("MyAuthorization", jwtString);
+
+            let requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/visitas.php`;
+
+            if (pac != undefined) {
+                url = `${apiUrl}/visitas.php?pac=${pac}&calendarview=1`
+            }
+
+            //*****************************************
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    $('.calendario').show();
+
+                    let events = [];
+
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            const element = data[key];
+                            let parts = element.dt.split('-');
+
+                            var mydate = new Date(parts[0], parts[1] - 1, parts[2]);
+
+                            let typeClass = element.cantidad_solapados == '0' ? 'green' : 'inverted orange';
+                            let indicador = element.cantidad_solapados == '0' ? 'Visitas' : 'Visitas solapadas';
+                            //class: 'inverted orange'
+                            let event = {
+                                date: mydate,
+                                message: indicador,
+                                class: typeClass
+                            }
+                            events.push(event);
+                        }
+                    }
+
+                    initializeCalendar(events);
+                    return;
+                }).catch((error) => {
+                    console.log(error);
+                });
+
+        }
+
+        Date.isLeapYear = function (year) {
+            return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
+        };
+
+        Date.getDaysInMonth = function (year, month) {
+            return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+        };
+
+        Date.prototype.isLeapYear = function () {
+            return Date.isLeapYear(this.getFullYear());
+        };
+
+        Date.prototype.getDaysInMonth = function () {
+            return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+        };
+
+        Date.prototype.addMonths = function (value) {
+            var n = this.getDate();
+            this.setDate(1);
+            this.setMonth(this.getMonth() + value);
+            this.setDate(Math.min(n, this.getDaysInMonth()));
+            return this;
+        };
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('');
+        }
+
+        function initializeCalendar(events) {
+            let today = new Date();
+            $('#inline_calendar').html('');
+            $('#inline_calendar')
+                .calendar({
+                    type: "day",
+                    inline: true,
+                    disableYear: true,
+                    disableMonth: true,
+                    text: {
+                        days: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                        monthsShort: ['En', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                        today: 'Hoy',
+                        now: 'Ahora',
+                        am: 'AM',
+                        pm: 'PM'
+                    },
+                    eventDates: events,
+                    maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+                    onSelect(date, mode) {
+                        focusDate = moment(date);
+                        localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
+                        let formatted_date = formatDate(date);
+                        let url = `/visitas.html?date=${formatted_date}&pac=${pac}`;
+                        window.location = url;
+                    },
+                    className: {
+                        prevIcon: '',
+                        nextIcon: ''
+                    }
+                });
+
+            if (focusDate !== null) {
+                $('#inline_calendar').calendar('set date', focusDate._d);
+                getTotalMonth(focusDate._d);
+            }
+
+        }
+
+        function getTotalMonth(date) {
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            let jwtString = `Bearer ${user.jwt}`;
+
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("MyAuthorization", jwtString);
+
+            let requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/presentaciones.php?year=${year}&month=${month}&pac=${pac}&presentacion`;
+
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    presentationData = data;
+                    let sumarioHoras = `Total de horas: ${data["total_hs"]}hs Total: $${data["total_pagar"]}`;
+                    sumarioHoras = sumarioHoras.replace(/\./g, ',');
+                    $("#summarioHoras").html(sumarioHoras);
+                    sumarioHoras = `ds:<b>${data["total_hs_ds"]}</b> - fs:<b>${data["total_hs_fs"]}</b> - fe:<b>${data["total_hs_fe"]}</b>`;
+                    sumarioHoras = sumarioHoras.replace(/\./g, ',');
+                    $("#summarioHoras1").html(sumarioHoras);
+                    //Si vino el id, deshabilitamos el boton de presentacion
+                    if ("id" in data) {
+                        //Si ya presento, revisamos si ingreso factura
+                        $("#presentar_horarios").addClass("disabled");
+                        //Si presento factura lo deshabilitamos
+                        if (data["factura"] == "S") {
+                            $("#presentar_factura").addClass("disabled");
+                        } else {
+                            $("#presentar_factura").removeClass("disabled");
+                        }
+                        //Si presento informe deshabilitamos
+                        if (data["informe"] == "S") {
+                            $("#presentar_informe").addClass("disabled");
+                        } else {
+                            $("#presentar_informe").removeClass("disabled");
+                        }
+                    } else {
+                        if (data["total_hs"] == 0) {
+                            $("#presentar_horarios").addClass("disabled");
+                            $("#presentar_factura").addClass("disabled");
+                            $("#presentar_informe").addClass("disabled");
+
+                        } else {
+                            $("#presentar_horarios").removeClass("disabled");
+
+                            //Si hay horas, no fue presentado, revisamos si puso factura o informe
+                            if (data["factura"] == "S") {
+                                $("#presentar_factura").addClass("disabled");
+                            } else {
+                                $("#presentar_factura").removeClass("disabled");
+                            }
+                            if (data["informe"] == "S") {
+                                $("#presentar_informe").addClass("disabled");
+                            } else {
+                                $("#presentar_informe").removeClass("disabled");
+                            }
+                        }
+                    }
+                    return;
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        function enviarPresentacion() {
+            let month = focusDate._d.getMonth() + 1;
+            let year = focusDate._d.getFullYear();
+
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            let jwtString = `Bearer ${user.jwt}`;
+
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("MyAuthorization", jwtString);
+
+            let requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/presentaciones.php?year=${year}&month=${month}&pac=${pac}&presentacion`;
+
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    $("#presentacion_modal_dlg").modal('hide');
+                    return;
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
