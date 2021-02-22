@@ -152,6 +152,10 @@
         const apiUrl = "https://www.conectat.com.ar/api";
 
         document.addEventListener('DOMContentLoaded', function () {
+            if (localStorage.getItem("user") === null) {
+                window.location.href = "login.html";
+            }
+
             $("#change_password_dlg").modal({
                 onShow: function () {
 

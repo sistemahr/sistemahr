@@ -299,6 +299,10 @@
         let presentationData = null;
 
         $(document).ready(function () {
+            if (localStorage.getItem("user") === null) {
+                window.location.href = "login.html";
+            }
+
             //Inicializamos los controles
             $('.calendario').hide();
             //$('.sumario').hide();
