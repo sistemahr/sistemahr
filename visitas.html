@@ -199,7 +199,7 @@
                 Cancelar
             </div>
             <div id="del_guardar_btn" class="ui positive button">
-                Guardar
+                Borrar
             </div>
         </div>
     </div>
@@ -371,14 +371,12 @@
                 $("#avisoMensaje").html("El horario hasta no puede ser menor a desde.");
                 $("#guardar_btn").addClass("disabled");
             } else {
-                $("#guardar_btn").removeClass("disabled");
                 chequearSolapamiento();
             }
 
 
             let diffStr = moment.utc(moment(timeEnd).diff(moment(timeStart))).format("H:m");
 
-            $("#guardar_btn").removeClass("disabled");
             $("#valdiff").html(diffStr);
         }
 
