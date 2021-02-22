@@ -323,49 +323,7 @@
                     return;
                 }
 
-                //Chequeamos si no hay alguna visita que se solape con la que queremos agregar
-                //hoy = new Date();
-                let user = JSON.parse(localStorage.getItem('user'));
-
-                let jwtString = `Bearer ${user.jwt}`;
-
-                var myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("MyAuthorization", jwtString);
-
-                var requestOptions = {
-                    method: 'GET',
-                    headers: myHeaders,
-                    redirect: 'follow'
-                };
-
-                let desdeq = desde.replace(/\:/g, '').replace(/\-/g, '').replace(/\s/g, '');
-                let hastaq = hasta.replace(/\:/g, '').replace(/\-/g, '').replace(/\s/g, '');
-
-                let url = `${apiUrl}/visitas.php?desde=${desdeq}&hasta=${hastaq}&id_pac=${pac}`;
-
-                fetch(url, requestOptions)
-                    .then(function (res) {
-                        return res.json(); //error here
-                    }).then(function (data) {
-                        if (data.length > 0) {
-                            $("#guardar_btn").addClass("disabled");
-                            $("#aviso").show();
-                            let rdesde = data[0].desde.substr(11, 5);
-                            let rhasta = data[0].hasta.substr(11, 5);
-                            let atnombre = data[0].nombre_completo;
-                            let mensaje = `El horario de ${rdesde} a ${rhasta} ya fue tomado por el AT<br>${atnombre}<br>
-                                           Ponerse en contacto con el colega para revisar el horario.<br>
-                                           Para presentar los horarios del mes es necesario
-                                           pedir permiso al administrador para permitir
-                                           superposición horaria con otro colega.`;
-                            $("#avisoMensaje").html(mensaje);
-                        }
-                        return;
-                    }).catch((error) => {
-                        console.log(error);
-                    });
-
+                chequearSolapamiento();
 
             });
 
@@ -414,6 +372,7 @@
                 $("#guardar_btn").addClass("disabled");
             } else {
                 $("#guardar_btn").removeClass("disabled");
+                chequearSolapamiento();
             }
 
 
@@ -589,6 +548,52 @@
                 }).catch((error) => {
                     console.log(error);
                 });
+        }
+
+        function chequearSolapamiento() {
+            //Chequeamos si no hay alguna visita que se solape con la que queremos agregar
+            //hoy = new Date();
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            let jwtString = `Bearer ${user.jwt}`;
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("MyAuthorization", jwtString);
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            let desdeq = desde.replace(/\:/g, '').replace(/\-/g, '').replace(/\s/g, '');
+            let hastaq = hasta.replace(/\:/g, '').replace(/\-/g, '').replace(/\s/g, '');
+
+            let url = `${apiUrl}/visitas.php?desde=${desdeq}&hasta=${hastaq}&id_pac=${pac}`;
+
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    if (data.length > 0) {
+                        $("#guardar_btn").addClass("disabled");
+                        $("#aviso").show();
+                        let rdesde = data[0].desde.substr(11, 5);
+                        let rhasta = data[0].hasta.substr(11, 5);
+                        let atnombre = data[0].nombre_completo;
+                        let mensaje = `El horario de ${rdesde} a ${rhasta} ya fue tomado por el AT<br>${atnombre}<br>
+                                           Ponerse en contacto con el colega para revisar el horario.<br>
+                                           Para presentar los horarios del mes es necesario
+                                           pedir permiso al administrador para permitir
+                                           superposición horaria con otro colega.`;
+                        $("#avisoMensaje").html(mensaje);
+                    }
+                    return;
+                }).catch((error) => {
+                    console.log(error);
+                });
+
         }
 
         function delVisita(id) {
