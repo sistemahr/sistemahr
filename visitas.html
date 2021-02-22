@@ -588,6 +588,8 @@
                                            pedir permiso al administrador para permitir
                                            superposición horaria con otro colega.`;
                         $("#avisoMensaje").html(mensaje);
+                    } else {
+                        $("#guardar_btn").removeClass("disabled");
                     }
                     return;
                 }).catch((error) => {
