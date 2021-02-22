@@ -67,7 +67,7 @@
                     <div class="header">
                         Aviso
                     </div>
-                        No tenes pacientes asignados. Contactar al administrador. 
+                    No tenes pacientes asignados. Contactar al administrador.
                 </div>
 
                 <!--                 <div class="ui warning message">
@@ -106,10 +106,38 @@
         </div>
     </div>
 
+    <div id="comentarios_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Comentarios del paciente
+        </div>
+        <div class="content">
+            <div id="sendingInfDimmer" class="ui inverted dimmer">
+                <div class="ui text loader">Guardando</div>
+            </div>
+
+            <form id="informe_form" class="ui form">
+                <div class="field">
+                    <textarea id="comentarios" name="comentarios"></textarea>
+                </div>
+                <div class="ui error message">
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                Cancelar
+            </div>
+            <div class="ui positive button">
+                Confirmar
+            </div>
+        </div>
+    </div>
+
     <script>
         const apiUrl = baseUrl + "/api";
 
         let pacientes = [];
+        let pac = "";
 
         // Get a value from the querystring
         function findGetParameter(parameterName) {
@@ -141,14 +169,68 @@
                 }
             });
 
+            $("#comentarios_modal_dlg").modal({
+                onShow: function () {
+                    let user = JSON.parse(localStorage.getItem('user'));
+                    //Recuperamos los comentarios
+                    var requestOptions = {
+                        method: 'GET',
+                        headers: getMyHeader(),
+                        redirect: 'follow'
+                    };
+
+                    let url = `${apiUrl}/pacientes.php?id_pac=${pac}&comentarios`;
+
+                    $("#comentarios").val('');
+                    fetch(url, requestOptions)
+                        .then(function (res) {
+                            return res.json(); //error here
+                        }).then(function (data) {
+                            $("#comentarios").val(data[0]["comentarios"]);
+                            return;
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                },
+                onDeny: function () {
+                    return true;
+                },
+                onApprove: function () {
+                    let user = JSON.parse(localStorage.getItem('user'));
+                    //Recuperamos los comentarios
+
+                    let comentarios = $("#comentarios").val();
+
+                    let raw = JSON.stringify({ "comentarios": comentarios });
+
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: getMyHeader(),
+                        body: raw,
+                        redirect: 'follow'
+                    };
+
+                    let url = `${apiUrl}/pacientes.php?pac=${pac}&comentarios`;
+
+                    fetch(url, requestOptions)
+                        .then(function (res) {
+                            return res.json(); //error here
+                        }).then(function (data) {
+                            $("#comentarios_modal_dlg").modal('hide');
+                            $("#comentarios").val(data[0]["comentarios"]);
+                            return;
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+
+                    return true;
+                }
+            });
+
             $("#logoutBtn").click(function () {
                 $("#confirma_salir_dlg").modal("show");
             });
 
-            $(".notas_paciente").click(function () {
-                alert("Notas del paciente");
-            });
-            
             /*
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker
@@ -185,7 +267,7 @@
                         for (i in data) {
                             let elementTxt = `<a href="calendar_pac.html?pac=${data[i]["id_pac"]}" class="item">
                                 <div class="right floated content">
-                                <i class="edit notas_paciente outline icon"></i>
+                                <i data-id="${data[i]["id_pac"]}" class="edit notas_paciente outline icon"></i>
                                 </div>
                                 <i class="large blue user middle aligned icon"></i>
                                 <div class="content">
@@ -194,6 +276,14 @@
                                     </a>`;
                             lista_pac.innerHTML += elementTxt;
                         }
+
+                        $(".notas_paciente").click(function (e) {
+                            e.preventDefault();
+
+                            pac = e.target.dataset.id;
+
+                            $("#comentarios_modal_dlg").modal('show');
+                        });
                     } else {
                         $("#aviso_sin_pacientes").show();
                         $("#segment_lista_pacientes").hide();

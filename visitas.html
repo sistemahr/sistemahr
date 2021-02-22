@@ -114,48 +114,50 @@
             <div id="savingDimmer" class="ui inverted dimmer">
                 <div class="ui text loader">Guardando</div>
             </div>
-            <div id="visita_form" class="ui two column grid form">
-                <div class="column two field">
-                    <label for="">Desde</label>
-                    <div class="ui" id="time_calendar_desde">
-                        <div class="ui input left icon">
-                            <i class="time icon"></i>
-                            <input id="visita_desde" type="time" name="desde" placeholder="Desde">
+            <form id="visita_form">
+                <div class="ui two column grid form">
+                    <div class="column two field">
+                        <label for="">Desde</label>
+                        <div class="ui" id="time_calendar_desde">
+                            <div class="ui input left icon">
+                                <i class="time icon"></i>
+                                <input id="visita_desde" type="time" name="desde" placeholder="Desde">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column two  field">
+                        <label for="">Hasta</label>
+                        <div class="ui" id="time_calendar_hasta">
+                            <div class="ui input left icon">
+                                <i class="time icon"></i>
+                                <input id="visita_hasta" type="time" name="hasta" placeholder="Hasta">
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="column two  field">
-                    <label for="">Hasta</label>
-                    <div class="ui" id="time_calendar_hasta">
-                        <div class="ui input left icon">
-                            <i class="time icon"></i>
-                            <input id="visita_hasta" type="time" name="hasta" placeholder="Hasta">
+                <div class="ui centered grid">
+                    <div class="ui statistic">
+                        <div class="label">
+                            Horas
                         </div>
+                        <div id="valdiff" class="value">-</div>
                     </div>
+                    <div class="row"></div>
                 </div>
-            </div>
-            <div class="ui centered grid">
-                <div class="ui statistic">
-                    <div class="label">
-                        Horas
-                    </div>
-                    <div id="valdiff" class="value">-</div>
-                </div>
-                <div class="row"></div>
-            </div>
 
-            <div class="ui accordion field">
-                <div class="title ">
-                    <i class="icon dropdown"></i>
-                    Detalles extra
-                </div>
-                <div class="content field ">
-                    <div class="ui toggle checkbox">
-                        <input type="checkbox" name="gift" tabindex="0" class="hidden">
-                        <label>Acompa&ntilde;amiento en internaci&oacute;n.</label>
+                <div class="ui accordion field">
+                    <div class="title ">
+                        <i class="icon dropdown"></i>
+                        Detalles extra
+                    </div>
+                    <div class="content field ">
+                        <div class="ui toggle checkbox">
+                            <input type="checkbox" name="intern" tabindex="0" class="hidden">
+                            <label>Acompa&ntilde;amiento en internaci&oacute;n.</label>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <div id="aviso" class="ui warning message" style="display: none;">
                 <i class="close icon"></i>
@@ -260,7 +262,7 @@
                             return;
                         }
 
-                        let raw = JSON.stringify({ "id_at": user.id, "id_pac": pac, "desde": desde, "hasta": hasta });
+                        let raw = JSON.stringify({ "id_at": user.id, "id_pac": pac, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
 
                         let requestOptions = {
                             method: 'POST',
@@ -535,7 +537,7 @@
 
                             let superpos = parseInt(element.cantidad_solapados) > 0 ? '<a class="ui orange circular label">Visita con superposicion horaria</a>' : '';
 
-                            let presentadoClass = element.presentado == "1" ? "disabled" :  "";
+                            let presentadoClass = element.presentado == "1" ? "disabled" : "";
 
                             hayPresentados = element.presentado == "1";
 
