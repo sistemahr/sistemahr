@@ -215,6 +215,8 @@
         let desde = null;
         let hasta = null;
 
+        let accion = "";
+
         // Get a value from the querystring
         function findGetParameter(parameterName) {
             var result = null,
@@ -241,6 +243,8 @@
             $('.ui.dropdown').dropdown();
 
             $("#nueva_visita").click(function () {
+                accion = "nueva";
+
                 $('#visita_modal_dlg').modal({
                     onShow: function () {
                         $('.ui.accordion').accordion();
@@ -323,7 +327,9 @@
                     return;
                 }
 
-                chequearSolapamiento();
+                if (accion == "nueva") {
+                    chequearSolapamiento();
+                }
 
             });
 
@@ -371,7 +377,12 @@
                 $("#avisoMensaje").html("El horario hasta no puede ser menor a desde.");
                 $("#guardar_btn").addClass("disabled");
             } else {
-                chequearSolapamiento();
+                if (accion == "nueva") {
+                    chequearSolapamiento();
+                } else {
+                    $("#guardar_btn").removeClass("disabled");
+                }
+
             }
 
 
@@ -496,6 +507,7 @@
                             visitas.push(element);
 
                             let superpos = parseInt(element.cantidad_solapados) > 0 ? '<a class="ui orange circular label">Visita con superposicion horaria</a>' : '';
+                            let intern = parseInt(element.internacion) > 0 ? '<a class="ui blue circular label">Visita con internacion</a>' : '';
 
                             let presentadoClass = element.presentado == "1" ? "disabled" : "";
 
@@ -516,6 +528,7 @@
                                                   <div class="description">${element.iniciales}, Duracion: <b>(${element.rango}hs.)</b></div>
                                               </div>
                                               ${superpos}
+                                              ${intern}
                                           </div>`;
 
                             visitaslist.innerHTML += elementTxt;
@@ -539,6 +552,7 @@
 
                     $(".editar_visita").click(function (e) {
                         //e.target.dataset.id
+                        accion = "editar";
                         editVisita(e.target.dataset.id);
                     });
 
@@ -656,6 +670,8 @@
 
             $('#visita_modal_dlg').modal({
                 onShow: () => {
+                    $('.ui.accordion').accordion(visit.internacion == 1?"open":"", 1);
+                    $('.ui.checkbox').checkbox(visit.internacion == 1?"set checked":"");
 
                     $("#visita_desde").val(visit.desde);
                     $("#visita_hasta").val(visit.hasta);
@@ -664,6 +680,8 @@
                     $("#guardar_btn").addClass("disabled");
                     $("#message").hide();
                     $("#responseMessage").html("");
+                    $("#valdiff").html("");
+                    obtieneDiferencia();
                 },
                 onApprove: function (element) {
                     let formVisita = $('#visita_form');
@@ -680,7 +698,7 @@
                     myHeaders.append("Content-Type", "application/json");
                     myHeaders.append("MyAuthorization", jwtString);
 
-                    let raw = JSON.stringify({ "id": id, "desde": desde, "hasta": hasta });
+                    let raw = JSON.stringify({ "id": id, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
 
                     let requestOptions = {
                         method: 'POST',
