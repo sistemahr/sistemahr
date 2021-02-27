@@ -215,7 +215,7 @@
         let desde = null;
         let hasta = null;
 
-        let accion = "";
+        let id_visita = null;
 
         // Get a value from the querystring
         function findGetParameter(parameterName) {
@@ -243,7 +243,7 @@
             $('.ui.dropdown').dropdown();
 
             $("#nueva_visita").click(function () {
-                accion = "nueva";
+                id_visita = null;
 
                 $('#visita_modal_dlg').modal({
                     onShow: function () {
@@ -254,6 +254,7 @@
                         $("#cabecera_visita_dlg").html("Nueva Visita");
                         $("#guardar_btn").addClass("disabled");
                         $("#message").hide();
+                        $("#aviso").hide();
                         $("#responseMessage").html("");
                         $("#valdiff").html("");
                     },
@@ -327,9 +328,7 @@
                     return;
                 }
 
-                if (accion == "nueva") {
-                    chequearSolapamiento();
-                }
+                chequearSolapamiento();
 
             });
 
@@ -377,12 +376,7 @@
                 $("#avisoMensaje").html("El horario hasta no puede ser menor a desde.");
                 $("#guardar_btn").addClass("disabled");
             } else {
-                if (accion == "nueva") {
-                    chequearSolapamiento();
-                } else {
-                    $("#guardar_btn").removeClass("disabled");
-                }
-
+                chequearSolapamiento();
             }
 
 
@@ -552,7 +546,7 @@
 
                     $(".editar_visita").click(function (e) {
                         //e.target.dataset.id
-                        accion = "editar";
+                        id_visita = e.target.dataset.id;
                         editVisita(e.target.dataset.id);
                     });
 
@@ -583,6 +577,10 @@
             let hastaq = hasta.replace(/\:/g, '').replace(/\-/g, '').replace(/\s/g, '');
 
             let url = `${apiUrl}/visitas.php?desde=${desdeq}&hasta=${hastaq}&id_pac=${pac}`;
+
+            if (id_visita != null) {
+                url += `&id=${id_visita}`;
+            }
 
             fetch(url, requestOptions)
                 .then(function (res) {
@@ -670,8 +668,8 @@
 
             $('#visita_modal_dlg').modal({
                 onShow: () => {
-                    $('.ui.accordion').accordion(visit.internacion == 1?"open":"", 1);
-                    $('.ui.checkbox').checkbox(visit.internacion == 1?"set checked":"");
+                    $('.ui.accordion').accordion(visit.internacion == 1 ? "open" : "", 1);
+                    $('.ui.checkbox').checkbox(visit.internacion == 1 ? "set checked" : "");
 
                     $("#visita_desde").val(visit.desde);
                     $("#visita_hasta").val(visit.hasta);

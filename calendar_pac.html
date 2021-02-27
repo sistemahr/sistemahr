@@ -96,6 +96,10 @@
     </div>
 
     <div class="scrollable">
+        <div id="loadingCalDimmer" class="ui inverted dimmer">
+            <div class="ui text loader">Cargando calendario</div>
+        </div>
+
         <div class="ui middle aligned center aligned grid calendario">
             <div class="column col_cal">
                 <h3 id="calendario_titulo">Calendario de visitas</h3>
@@ -734,11 +738,13 @@
                 url = `${apiUrl}/visitas.php?pac=${pac}&calendarview=1`
             }
 
+            $("#loadingCalDimmer").addClass("active");
             //*****************************************
             fetch(url, requestOptions)
                 .then(function (res) {
                     return res.json(); //error here
                 }).then(function (data) {
+                    $("#loadingCalDimmer").removeClass("active");
                     $('.calendario').show();
 
                     let events = [];
