@@ -38,12 +38,6 @@
         .column {
             margin: 10px;
         }
-
-        /*
-        .column {
-            max-width: 450px;
-        }
-        */
     </style>
 </head>
 
@@ -115,34 +109,36 @@
                 <div class="ui text loader">Guardando</div>
             </div>
             <form id="visita_form">
-                <div class="ui two column grid form">
-                    <div class="column two field">
-                        <label for="">Desde</label>
-                        <div class="ui" id="time_calendar_desde">
-                            <div class="ui input left icon">
-                                <i class="time icon"></i>
-                                <input id="visita_desde" type="time" name="desde" placeholder="Desde">
+                <div id="detalles">
+                    <div class="ui two column grid form">
+                        <div class="column two field">
+                            <label for="">Desde</label>
+                            <div class="ui" id="time_calendar_desde">
+                                <div class="ui input left icon">
+                                    <i class="time icon"></i>
+                                    <input id="visita_desde" type="time" name="desde" placeholder="Desde">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column two  field">
+                            <label for="">Hasta</label>
+                            <div class="ui" id="time_calendar_hasta">
+                                <div class="ui input left icon">
+                                    <i class="time icon"></i>
+                                    <input id="visita_hasta" type="time" name="hasta" placeholder="Hasta">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="column two  field">
-                        <label for="">Hasta</label>
-                        <div class="ui" id="time_calendar_hasta">
-                            <div class="ui input left icon">
-                                <i class="time icon"></i>
-                                <input id="visita_hasta" type="time" name="hasta" placeholder="Hasta">
+                    <div class="ui centered grid">
+                        <div class="ui statistic">
+                            <div class="label">
+                                Horas
                             </div>
+                            <div id="valdiff" class="value">-</div>
                         </div>
+                        <div class="row"></div>
                     </div>
-                </div>
-                <div class="ui centered grid">
-                    <div class="ui statistic">
-                        <div class="label">
-                            Horas
-                        </div>
-                        <div id="valdiff" class="value">-</div>
-                    </div>
-                    <div class="row"></div>
                 </div>
 
                 <div class="ui accordion field">
@@ -151,9 +147,40 @@
                         Detalles extra
                     </div>
                     <div class="content field ">
-                        <div class="ui toggle checkbox">
-                            <input type="checkbox" name="intern" tabindex="0" class="hidden">
+                        <div id="internacion" class="ui toggle checkbox">
+                            <input id="intern" type="checkbox" name="intern" tabindex="0" class="hidden">
                             <label>Acompa&ntilde;amiento en internaci&oacute;n.</label>
+                        </div>
+                        <br>
+                        <br>
+                        <div id="supervision" class="ui toggle checkbox">
+                            <input type="checkbox" name="supervision" tabindex="0" class="hidden">
+                            <label>Tarea de supervision.</label>
+                        </div>
+                        <br>
+                        <div id="coordinacion" class="ui toggle checkbox">
+                            <input type="checkbox" name="coordinacion" tabindex="0" class="hidden">
+                            <label>Tarea de coordinacion.</label>
+                        </div>
+                        <br>
+                        <div id="coorsup" class="ui toggle checkbox">
+                            <input type="checkbox" name="coorsup" tabindex="0" class="hidden">
+                            <label>Tarea de coordinacion + supervision.</label>
+                        </div>
+                        <br>
+                        <div id="docencia1" class="ui toggle checkbox">
+                            <input type="checkbox" name="docencia1" tabindex="0" class="hidden">
+                            <label>Tarea de docencia - Nivelacion.</label>
+                        </div>
+                        <br>
+                        <div id="docencia2" class="ui toggle checkbox">
+                            <input type="checkbox" name="docencia2" tabindex="0" class="hidden">
+                            <label>Tarea de docencia - General.</label>
+                        </div>
+                        <br>
+                        <div id="docencia3" class="ui toggle checkbox">
+                            <input type="checkbox" name="docencia3" tabindex="0" class="hidden">
+                            <label>Tarea de docencia - Otros. </label>
                         </div>
                     </div>
                 </div>
@@ -217,6 +244,9 @@
 
         let id_visita = null;
 
+        let permisos = null;
+        let type = 1;
+
         // Get a value from the querystring
         function findGetParameter(parameterName) {
             var result = null,
@@ -249,6 +279,7 @@
                     onShow: function () {
                         $('.ui.accordion').accordion();
                         $('.ui.checkbox').checkbox();
+
                         $("#visita_desde").val("");
                         $("#visita_hasta").val("");
                         $("#cabecera_visita_dlg").html("Nueva Visita");
@@ -257,6 +288,178 @@
                         $("#aviso").hide();
                         $("#responseMessage").html("");
                         $("#valdiff").html("");
+
+                        //Por defecto muestro todo
+                        $("#detalles").show();
+                        $("#internacion").show();
+
+                        $("#supervision").checkbox("uncheck");
+                        $("#coordinacion").checkbox("uncheck");
+                        $("#coorsup").checkbox("uncheck");
+                        $("#docencia1").checkbox("uncheck");
+                        $("#docencia2").checkbox("uncheck");
+                        $("#docencia3").checkbox("uncheck");
+
+                        type = 1;
+
+                        $("#supervision").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#coordinacion").checkbox("uncheck");
+                                $("#coorsup").checkbox("uncheck");
+                                $("#docencia1").checkbox("uncheck");
+                                $("#docencia2").checkbox("uncheck");
+                                $("#docencia3").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 2;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        $("#coordinacion").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#supervision").checkbox("uncheck");
+                                $("#coorsup").checkbox("uncheck");
+                                $("#docencia1").checkbox("uncheck");
+                                $("#docencia2").checkbox("uncheck");
+                                $("#docencia3").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 3;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        $("#coorsup").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#supervision").checkbox("uncheck");
+                                $("#coordinacion").checkbox("uncheck");
+                                $("#docencia1").checkbox("uncheck");
+                                $("#docencia2").checkbox("uncheck");
+                                $("#docencia3").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 4;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        $("#docencia1").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#supervision").checkbox("uncheck");
+                                $("#coordinacion").checkbox("uncheck");
+                                $("#coorsup").checkbox("uncheck");
+                                $("#docencia2").checkbox("uncheck");
+                                $("#docencia3").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 5;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        $("#docencia2").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#supervision").checkbox("uncheck");
+                                $("#coordinacion").checkbox("uncheck");
+                                $("#coorsup").checkbox("uncheck");
+                                $("#docencia1").checkbox("uncheck");
+                                $("#docencia3").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 6;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        $("#docencia3").checkbox({
+                            onChecked: function () {
+                                //dechequeamos los demas
+                                $("#supervision").checkbox("uncheck");
+                                $("#coordinacion").checkbox("uncheck");
+                                $("#coorsup").checkbox("uncheck");
+                                $("#docencia1").checkbox("uncheck");
+                                $("#docencia2").checkbox("uncheck");
+                                $("#guardar_btn").removeClass("disabled");
+                                $("#detalles").hide(500);
+                                $("#internacion").hide(500);
+                                type = 7;
+                            },
+                            onUnchecked: function () {
+                                $("#detalles").show(500);
+                                $("#internacion").show(500);
+                                $("#guardar_btn").addClass("disabled");
+                                type = 1;
+                            }
+                        });
+
+                        //Mostrar opcion de supervision
+                        if (permisos[0] == "1") {
+                            $("#supervision").show();
+                        } else {
+                            $("#supervision").hide();
+                        }
+
+                        //Mostrar opcion de coordinacion
+                        if (permisos[1] == "1") {
+                            $("#coordinacion").show();
+                        } else {
+                            $("#coordinacion").hide();
+                        }
+
+                        //Mostrar opcion de coordinacion + supervision
+                        if (permisos[0] == "1" &&
+                            permisos[1] == "1") {
+                            $("#coorsup").show();
+                        } else {
+                            $("#coorsup").hide();
+                        }
+
+                        //Mostrar opcion de docencia
+                        if (permisos[2] == "1") {
+                            $("#docencia1").show();
+                            $("#docencia2").show();
+                            $("#docencia3").show();
+                        } else {
+                            $("#docencia1").hide();
+                            $("#docencia2").hide();
+                            $("#docencia3").hide();
+                        }
                     },
                     onApprove: function (element) {
                         let user = JSON.parse(localStorage.getItem('user'));
@@ -266,11 +469,19 @@
                         // get all values
                         let allFields = formVisita.form('get values');
 
-                        if (!validaRangoHorario()) {
-                            return;
+                        //Solo chequeo si es una visita normal.
+                        if (type == 1) {
+                            if (!validaRangoHorario()) {
+                                return;
+                            }
+                        }
+                        else {
+                            //Si es una tarea especial solo ponemos el valor desde
+                            desde = moment(hoy).format("YYYY-MM-DD HH:mm");
+                            hasta = moment(hoy).format("YYYY-MM-DD HH:mm");
                         }
 
-                        let raw = JSON.stringify({ "id_at": user.id, "id_pac": pac, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
+                        let raw = JSON.stringify({ "id_at": user.id, "id_pac": pac, type: type, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
 
                         let requestOptions = {
                             method: 'POST',
@@ -285,6 +496,9 @@
                         $("#savingDimmer").addClass("active");
                         fetch(url, requestOptions)
                             .then(function (res) {
+                                //Si todo salio bien cerramos el dialogo y refrescamos la lista
+                                cargarVisitas();
+                                $('#visita_modal_dlg').modal("hide");
                                 return res.json(); //error here
                             }).then(function (data) {
                                 $("#savingDimmer").removeClass("active");
@@ -293,10 +507,6 @@
                                     $("#responseMessage").html(data.message);
                                     return false;
                                 }
-
-                                //Si todo salio bien cerramos el dialogo y refrescamos la lista
-                                cargarVisitas();
-                                $('#visita_modal_dlg').modal("hide");
                                 return true;
                             }).catch((error) => {
                                 console.log(error);
@@ -449,6 +659,9 @@
         function cargarVisitas() {
             let user = JSON.parse(localStorage.getItem('user'));
 
+            //Mostramos u ocultamos las tareas de coordinacion, supervision y docencia
+            permisos = user["permisos"].split(',');
+
             let jwtString = `Bearer ${user.jwt}`;
 
             var myHeaders = new Headers();
@@ -507,6 +720,47 @@
 
                             hayPresentados = element.presentado == "1";
 
+                            let content = '';
+
+                            switch (element.type) {
+                                case '1':
+                                    content = `<div class="content">
+                                                  <div class="header">${element.desde}hs. ${element.hasta}hs.</div>
+                                                  <div class="description">${element.iniciales}, Duracion: <b>(${element.rango}hs.)</b></div>
+                                              </div>`;
+                                    break;
+                                case '2':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de supervision</div>
+                                              </div>`;
+                                    break;
+                                case '3':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de coordinacion</div>
+                                              </div>`;
+                                    break;
+                                case '4':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de coordinacion/supervision</div>
+                                              </div>`;
+                                    break;
+                                case '5':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de docencia - nivelacion</div>
+                                              </div>`;
+                                    break;
+                                case '6':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de docencia - general</div>
+                                              </div>`;
+                                    break;
+                                case '7':
+                                    content = `<div class="content">
+                                                  <div class="header">Tarea de docencia - otros</div>
+                                              </div>`;
+                                    break;
+                            }
+
                             let elementTxt = `<div class="item">
                                               <div class="right floated content">
                                                   <button data-id="${element.id}" class="ui positive ${presentadoClass} icon button editar_visita">
@@ -517,10 +771,7 @@
                                                   </button>
                                               </div>
                                               <i class="large user alternate middle aligned icon"></i>
-                                              <div class="content">
-                                                  <div class="header">${element.desde}hs. ${element.hasta}hs.</div>
-                                                  <div class="description">${element.iniciales}, Duracion: <b>(${element.rango}hs.)</b></div>
-                                              </div>
+                                              ${content}
                                               ${superpos}
                                               ${intern}
                                           </div>`;
@@ -671,43 +922,250 @@
                     $('.ui.accordion').accordion(visit.internacion == 1 ? "open" : "", 1);
                     $('.ui.checkbox').checkbox(visit.internacion == 1 ? "set checked" : "");
 
-                    $("#visita_desde").val(visit.desde);
-                    $("#visita_hasta").val(visit.hasta);
+                    //Por defecto muestro todo
+                    $("#detalles").show();
+                    $("#internacion").show();
 
-                    $("#cabecera_visita_dlg").html("Editar Visita");
-                    $("#guardar_btn").addClass("disabled");
-                    $("#message").hide();
-                    $("#responseMessage").html("");
-                    $("#valdiff").html("");
-                    obtieneDiferencia();
+                    //Mostrar opcion de supervision
+                    if (permisos[0] == "1") {
+                        $("#supervision").show();
+                    } else {
+                        $("#supervision").hide();
+                    }
+
+                    //Mostrar opcion de coordinacion
+                    if (permisos[1] == "1") {
+                        $("#coordinacion").show();
+                    } else {
+                        $("#coordinacion").hide();
+                    }
+
+                    //Mostrar opcion de coordinacion + supervision
+                    if (permisos[0] == "1" &&
+                        permisos[1] == "1") {
+                        $("#coorsup").show();
+                    } else {
+                        $("#coorsup").hide();
+                    }
+
+                    //Mostrar opcion de docencia
+                    if (permisos[2] == "1") {
+                        $("#docencia1").show();
+                        $("#docencia2").show();
+                        $("#docencia3").show();
+                    } else {
+                        $("#docencia1").hide();
+                        $("#docencia2").hide();
+                        $("#docencia3").hide();
+                    }
+
+                    $("#supervision").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#coordinacion").checkbox("uncheck");
+                            $("#coorsup").checkbox("uncheck");
+                            $("#docencia1").checkbox("uncheck");
+                            $("#docencia2").checkbox("uncheck");
+                            $("#docencia3").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 2;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    $("#coordinacion").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#supervision").checkbox("uncheck");
+                            $("#coorsup").checkbox("uncheck");
+                            $("#docencia1").checkbox("uncheck");
+                            $("#docencia2").checkbox("uncheck");
+                            $("#docencia3").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 3;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    $("#coorsup").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#supervision").checkbox("uncheck");
+                            $("#coordinacion").checkbox("uncheck");
+                            $("#docencia1").checkbox("uncheck");
+                            $("#docencia2").checkbox("uncheck");
+                            $("#docencia3").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 4;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    $("#docencia1").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#supervision").checkbox("uncheck");
+                            $("#coordinacion").checkbox("uncheck");
+                            $("#coorsup").checkbox("uncheck");
+                            $("#docencia2").checkbox("uncheck");
+                            $("#docencia3").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 5;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    $("#docencia2").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#supervision").checkbox("uncheck");
+                            $("#coordinacion").checkbox("uncheck");
+                            $("#coorsup").checkbox("uncheck");
+                            $("#docencia1").checkbox("uncheck");
+                            $("#docencia3").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 6;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    $("#docencia3").checkbox({
+                        onChecked: function () {
+                            //dechequeamos los demas
+                            $("#supervision").checkbox("uncheck");
+                            $("#coordinacion").checkbox("uncheck");
+                            $("#coorsup").checkbox("uncheck");
+                            $("#docencia1").checkbox("uncheck");
+                            $("#docencia2").checkbox("uncheck");
+                            $("#guardar_btn").removeClass("disabled");
+                            $("#detalles").hide(500);
+                            $("#internacion").hide(500);
+                            type = 7;
+                        },
+                        onUnchecked: function () {
+                            $("#detalles").show(500);
+                            $("#internacion").show(500);
+                            $("#guardar_btn").addClass("disabled");
+                            type = 1;
+                        }
+                    });
+
+                    //Si es tipo visita comun
+                    if (visit.type == 1) {
+                        $("#visita_desde").val(visit.desde);
+                        $("#visita_hasta").val(visit.hasta);
+
+                        $("#cabecera_visita_dlg").html("Editar Visita");
+                        $("#guardar_btn").addClass("disabled");
+                        $("#message").hide();
+                        $("#aviso").hide();
+                        $("#responseMessage").html("");
+                        $("#valdiff").html("");
+                        obtieneDiferencia();
+                    } else {
+                        //Si es tipo tarea 
+                        $('.ui.accordion').accordion("open", 1);
+
+                        $("#supervision").checkbox("uncheck");
+                        $("#coordinacion").checkbox("uncheck");
+                        $("#coorsup").checkbox("uncheck");
+                        $("#docencia1").checkbox("uncheck");
+                        $("#docencia2").checkbox("uncheck");
+                        $("#docencia3").checkbox("uncheck");
+
+                        switch (visit.type) {
+                            case '2':
+                                $("#supervision").checkbox("check");
+                                break;
+                            case '3':
+                                $("#coordinacion").checkbox("check");
+                                break;
+                            case '4':
+                                $("#coorsup").checkbox("check");
+                                break;
+                            case '5':
+                                $("#docencia1").checkbox("check");
+                                break;
+                            case '6':
+                                $("#docencia2").checkbox("check");
+                                break;
+                            case '7':
+                                $("#docencia3").checkbox("check");
+                                break;
+
+                        }
+
+                    }
                 },
                 onApprove: function (element) {
+                    let user = JSON.parse(localStorage.getItem('user'));
+
                     let formVisita = $('#visita_form');
 
                     // get all values
                     let allFields = formVisita.form('get values');
-                    console.log(allFields);
 
-                    let user = JSON.parse(localStorage.getItem('user'));
+                    //Solo chequeo si es una visita normal.
+                    if (type == 1) {
+                        if (!validaRangoHorario()) {
+                            return;
+                        }
+                    }
+                    else {
+                        //Si es una tarea especial solo ponemos el valor desde
+                        desde = moment(hoy).format("YYYY-MM-DD HH:mm");
+                        hasta = moment(hoy).format("YYYY-MM-DD HH:mm");
+                    }
 
-                    let jwtString = `Bearer ${user.jwt}`;
 
-                    let myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    myHeaders.append("MyAuthorization", jwtString);
 
-                    let raw = JSON.stringify({ "id": id, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
+                    let raw = JSON.stringify({ "id": id, type: type, "desde": desde, "hasta": hasta, "intern": allFields["intern"] });
 
                     let requestOptions = {
                         method: 'POST',
-                        headers: myHeaders,
+                        headers: getMyHeader(),
                         body: raw,
                         redirect: 'follow'
                     };
 
-                    //let url = `${apiUrl}/visitas.php&id=${id}`;
                     let url = `${apiUrl}/visitas.php`;
 
+                    $("#message").hide();
                     $("#savingDimmer").addClass("active");
                     fetch(url, requestOptions)
                         .then(function (res) {
