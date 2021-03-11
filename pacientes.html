@@ -58,6 +58,7 @@
                 <div class="ui dimmer cargando_pacientes">
                     <div class="ui text loader">Cargando pacientes</div>
                 </div>
+
                 <h2>Seleccionar Paciente</h2>
                 <div id="segment_lista_pacientes" class="ui segment">
                     <div id="lista_pacientes" class="ui very relaxed divided link list">
@@ -70,19 +71,6 @@
                     No tenes pacientes asignados. Contactar al administrador.
                 </div>
 
-                <!--                 <div class="ui warning message">
-                                            <div class="header">
-                                                Importante
-                                            </div>
-                                            <div class="content">
-                                                <p>Existen visitas sin presentar. </p>
-                                                <p>El plazo es del 1 al 5 de este mes para presentar las visitas correspondientes al mes de
-                                                    Octubre.</p>
-                                                <p>En caso de pasada esa fecha, los honorarios seran liquidados a partir del 15 del mes
-                                                    siguiente.</p>
-                                            </div>
-                                        </div>
-                -->
             </div>
         </div>
     </div>
@@ -133,6 +121,23 @@
         </div>
     </div>
 
+    <div id="aviso_modal_dlg" class="ui tiny modal">
+        <div class="header">
+            Tenes nuevos mensajes
+        </div>
+        <div class="content">
+            <div id="messages">
+
+            </div>
+            <input type="hidden" name="id" id="id" />
+        </div>
+        <div class="actions">
+            <div class="ui positive button">
+                Confirmar
+            </div>
+        </div>
+    </div>
+
     <script>
         const apiUrl = baseUrl + "/api";
 
@@ -155,8 +160,9 @@
             if (localStorage.getItem("user") === null) {
                 window.location.href = "login.html";
             }
-            
+
             cargarPacientes();
+            cargarMensages();
 
             $("#confirma_salir_dlg").modal({
                 onShow: function () {
@@ -293,6 +299,94 @@
                         $("#segment_lista_pacientes").hide();
                     }
 
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        function cargarMensages() {
+            let user = JSON.parse(localStorage.getItem('user'));
+            var requestOptions = {
+                method: 'GET',
+                headers: getMyHeader(),
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/messages.php?at=${user.id}`;
+
+            let lista_mensajes = document.getElementById("messages");
+
+            lista_mensajes.innerHTML = "";
+
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    lista_mensajes = document.getElementById("messages");
+
+                    lista_mensajes.innerHTML
+                    //Chequeamos si hay pacientes
+                    if (data.length > 0) {
+                        for (i in data) {
+                            let element = data[i];
+
+                            $("#aviso_modal_dlg").modal({
+                                onShow: function () {
+                                    //Mostramos el mensaje
+                                    let type = "info";
+                                    switch (element.type) {
+                                        case '0':
+                                            type = "warning";
+                                            break;
+                                        case '1':
+                                            type = "info";
+                                            break;
+                                        case '2':
+                                            type = "error";
+                                            break;
+                                        case '3':
+                                            type = "positive";
+                                            break;
+                                        default:
+                                            type = "info";
+                                            break;
+                                    }
+
+                                    let elementTxt = `<div class="ui ${type} message">
+                                                      <div class="header">
+                                                        ${element.titulo}
+                                                       </div>
+                                                        ${element.mensaje}
+                                                      </div>
+                                                      
+                                                      `;
+                                    lista_mensajes.innerHTML += elementTxt;
+
+                                    $('#id').val(element.id);
+                                },
+                                onApprove: function () {
+                                    let user = JSON.parse(localStorage.getItem('user'));
+                                    var requestOptions = {
+                                        method: 'POST',
+                                        headers: getMyHeader(),
+                                        redirect: 'follow'
+                                    };
+
+                                    let id = $('#id').val();
+
+                                    let url = `${apiUrl}/messages.php?id=${id}&leido`;
+
+                                    fetch(url, requestOptions)
+                                        .then(function (res) {
+                                            return res.json(); //error here
+                                        }).then(function (data) {
+                                            cargarMensages();
+                                        });
+                                }
+                            }).modal("show");
+                            return;
+                        }
+                    }
                 }).catch((error) => {
                     console.log(error);
                 });
