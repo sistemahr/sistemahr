@@ -178,6 +178,11 @@
                             Informe
                         </a>
                     </div>
+                    <div class="ui ignored liquidado positive icon message" style="display: none;">
+                        <div class="content">
+                            <p>Mes liquidado.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,6 +263,8 @@
             </div>
             <h3 id="totalFacturaDescr">La factura correspondiente a Octubre 2020 debera tener un importe de:</h3>
             <h2 id="totalFactura">$23.940,00</h2>
+
+            <h4 id="mensaje_facturacion"></h4>
 
             <input class="ui input" id="factura_file" type="file" accept="image/*,application/pdf" name="facfile" />
 
@@ -408,6 +415,8 @@
                     let periodo = focusDate.locale("es").format("MMMM YYYY");
                     let facturaDescr = `La factura correspondiente a ${periodo} debera tener un importe de:`;
                     $("#totalFacturaDescr").html(facturaDescr);
+
+                    $("#mensaje_facturacion").html(presentationData["mensaje_facturacion"]);
 
                     $("#totalFactura").html(totalFactContent);
                 },
@@ -855,7 +864,8 @@
                     return res.json(); //error here
                 }).then(function (data) {
                     presentationData = data;
-                    if (data.total_hs > 0) {
+                    //Si vinieron horas o hay tareas especiales
+                    if (data.total_hs || data.total_pagar_tareas > 0) {
                         $(".sumario").show();
                         $(".sumario").removeClass("no_visible");
                     } else {
@@ -930,6 +940,12 @@
                             $("#presentar_factura").show();
                             $("#presentar_factura").removeClass("disabled");
                             $(".fact_label").addClass("blue");
+                        }
+
+                        if (data.comprobante == "S") {
+                            $(".liquidado").show();
+                        } else {
+                            $(".liquidado").hide();
                         }
 
                     } else {
