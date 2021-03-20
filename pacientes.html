@@ -104,6 +104,12 @@
             </div>
 
             <form id="informe_form" class="ui form">
+                <h4>Info paciente:</h4>
+                <div class="field">
+                    <p id="infoPaciente">-</p>
+                    <p id="infoTerapeuta">-</p>
+                </div>
+                <h4>Comentarios sobre el paciente:</h4>
                 <div class="field">
                     <textarea id="comentarios" name="comentarios"></textarea>
                 </div>
@@ -197,6 +203,8 @@
                             return res.json(); //error here
                         }).then(function (data) {
                             $("#comentarios").val(data[0]["comentarios"]);
+                            $("#infoPaciente").html(`<b>Familiar: </b>${data[0]["nombre_familiar"]} (${data[0]["telefono_familiar"]})`);
+                            $("#infoTerapeuta").html(`<b>Terapeuta: </b>${data[0]["nombre_terapeuta"]} (${data[0]["telefono_terapeuta"]})`);
                             return;
                         }).catch((error) => {
                             console.log(error);
@@ -275,7 +283,7 @@
                     //Chequeamos si hay pacientes
                     if (data.length > 0) {
                         for (i in data) {
-                            let elementTxt = `<a href="calendar_pac.html?pac=${data[i]["id_pac"]}" class="item">
+                            let elementTxt = `<a href="calendar.html?pac=${data[i]["id_pac"]}" class="item">
                                 <div class="right floated content">
                                 <i data-id="${data[i]["id_pac"]}" class="edit notas_paciente outline icon"></i>
                                 </div>
