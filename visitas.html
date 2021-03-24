@@ -168,17 +168,17 @@
                             <label>Tarea de coordinacion + supervision.</label>
                         </div>
                         <br>
-                        <div id="docencia1" class="ui toggle checkbox">
+                        <div id="docencia1" class="ui toggle checkbox" style="display: none;">
                             <input type="checkbox" name="docencia1" tabindex="0" class="hidden">
                             <label>Tarea de docencia - Nivelacion.</label>
                         </div>
                         <br>
-                        <div id="docencia2" class="ui toggle checkbox">
+                        <div id="docencia2" class="ui toggle checkbox" style="display: none;">
                             <input type="checkbox" name="docencia2" tabindex="0" class="hidden">
                             <label>Tarea de docencia - General.</label>
                         </div>
                         <br>
-                        <div id="docencia3" class="ui toggle checkbox">
+                        <div id="docencia3" class="ui toggle checkbox" style="display: none;">
                             <input type="checkbox" name="docencia3" tabindex="0" class="hidden">
                             <label>Otros.</label>
                         </div>
@@ -863,22 +863,11 @@
 
             $("#del_visita_modal_dlg").modal({
                 onApprove: function (element) {
-                    let formVisita = $('#visita_form');
-
-                    // get all values
-                    let allFields = formVisita.form('get values');
-
                     let user = JSON.parse(localStorage.getItem('user'));
-
-                    let jwtString = `Bearer ${user.jwt}`;
-
-                    let myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    myHeaders.append("MyAuthorization", jwtString);
 
                     let requestOptions = {
                         method: 'DELETE',
-                        headers: myHeaders,
+                        headers: getMyHeader(),
                         redirect: 'follow'
                     };
 

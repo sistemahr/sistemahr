@@ -39,6 +39,11 @@
                 <i class="icon large chevron left"></i>
             </a>
         </div>
+        <div class="right menu">
+            <a id="logoutBtn" href="#" class="ui item">
+                <i class="large sign out alternate icon"></i>
+            </a>
+        </div>
     </div>
 
     <div class="ui column grid">
@@ -316,6 +321,14 @@
 
             $("#change_password_btn").click(function () {
                 $("#change_password_dlg").modal("show");
+            });
+
+            $("#logoutBtn").click(function () {
+                localStorage.removeItem("user");
+                localStorage.removeItem("focusDate");
+                localStorage.removeItem("pac");
+                window.location.href = "login.html";
+                return true;
             });
 
         });

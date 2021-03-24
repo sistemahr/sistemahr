@@ -167,6 +167,12 @@
                 window.location.href = "login.html";
             }
 
+            if (localStorage.getItem("bienvenido") === null) {
+                window.location.href = "bienvenido.html";
+            } else if (localStorage.getItem("profile") === null) {
+                window.location.href = "profile.html";
+            }
+
             cargarPacientes();
             cargarMensages();
 

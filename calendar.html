@@ -117,40 +117,54 @@
                 </div>
 
                 <div id="tareasEsp" class="ui left aligned form" style="display: none;">
-                    <div class="field ">
-                        <div id="supervision" class="ui toggle checkbox">
-                            <input type="checkbox" name="supervision" tabindex="0" class="hidden">
-                            <label>Tarea de supervision.</label>
+                    <div class="ui left aligned list">
+                        <div class="item">
+                            <div id="l_supervision" class="left floated content">
+                                <div id="supervision" class="ui toggle checkbox">
+                                    <input type="checkbox" name="supervision" tabindex="0" class="hidden">
+                                    <label>Tarea de supervision.</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field ">
-                        <div id="coordinacion" class="ui toggle checkbox">
-                            <input type="checkbox" name="coordinacion" tabindex="0" class="hidden">
-                            <label>Tarea de coordinacion.</label>
+                        <div class="item">
+                            <div id="l_coordinacion" class="left floated content">
+                                <div id="coordinacion" class="ui toggle checkbox">
+                                    <input type="checkbox" name="coordinacion" tabindex="0" class="hidden">
+                                    <label>Tarea de coordinacion.</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field ">
-                        <div id="coorsup" class="ui toggle checkbox">
-                            <input type="checkbox" name="coorsup" tabindex="0" class="hidden">
-                            <label>Tarea de coordinacion + supervision.</label>
+                        <div class="item">
+                            <div id="l_coorsup" class="left floated content">
+                                <div id="coorsup" class="ui toggle checkbox">
+                                    <input type="checkbox" name="coorsup" tabindex="0" class="hidden">
+                                    <label>Tarea de coordinacion + supervision.</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field ">
-                        <div id="docencia1" class="ui toggle checkbox">
-                            <input type="checkbox" name="docencia1" tabindex="0" class="hidden">
-                            <label>Tarea de docencia - Nivelacion.</label>
+                        <div class="item">
+                            <div id="l_docencia1" class="left floated content">
+                                <div id="docencia1" class="ui toggle checkbox">
+                                    <input type="checkbox" name="docencia1" tabindex="0" class="hidden">
+                                    <label>Tarea de docencia - Nivelacion.</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field ">
-                        <div id="docencia2" class="ui toggle checkbox">
-                            <input type="checkbox" name="docencia2" tabindex="0" class="hidden">
-                            <label>Tarea de docencia - General.</label>
+                        <div class="item">
+                            <div id="l_docencia2" class="left floated content">
+                                <div id="docencia2" class="ui toggle checkbox">
+                                    <input type="checkbox" name="docencia2" tabindex="0" class="hidden">
+                                    <label>Tarea de docencia - General.</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field ">
-                        <div id="docencia3" class="ui toggle checkbox">
-                            <input type="checkbox" name="docencia3" tabindex="0" class="hidden">
-                            <label>Otros.</label>
+                        <div class="item">
+                            <div id="l_docencia3" class="left floated content">
+                                <div id="docencia3" class="ui toggle checkbox">
+                                    <input type="checkbox" name="docencia3" tabindex="0" class="hidden">
+                                    <label>Otros.</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,14 +243,14 @@
 
     <div id="importante_modal_dlg" class="ui tiny modal">
         <div class="header">
-            Importante
+            Aviso
         </div>
         <div class="content">
             <div class="ui warning message">
                 <div class="header">
                     Importante
                 </div>
-                <div class="content">
+                <div class="contentImportante">
                     <p>Debera presentar los horarios correspondientes al mes de Octubre. </p>
                     <p>El plazo es del 1 al 5 de este mes para presentar las visitas correspondientes al mes corriente.
                     </p>
@@ -387,6 +401,10 @@
         let pac = null;
         let focusDate = null;
         let presentationData = null;
+        let tareaEspId = null;
+        let id_doc_niv = null;
+        let id_doc_gen = null;
+        let id_doc_otros = null;
         let params = {};
 
         $(document).ready(function () {
@@ -394,7 +412,7 @@
                 window.location.href = "login.html";
             }
 
-            $('.ui.checkbox').checkbox();
+            //$('.ui.checkbox').checkbox();
 
             //Inicializamos los controles
             $("#summarioHoras1").hide();
@@ -472,6 +490,8 @@
 
             $("#informe_modal_dlg").modal({
                 onShow: function () {
+                    let max_car_informe = params["max_car_informe"];
+
                     $('#informe_form').form({
                         on: 'change',
                         fields: {
@@ -482,7 +502,7 @@
                                     prompt: 'Por favor ingrese algun contenido al informe'
                                 },
                                 {
-                                    type: 'minLength[1500]',
+                                    type: `minLength[${max_car_informe}]`,
                                     prompt: 'Su informe debe contener al menos {ruleValue} caracteres'
                                 },
                                 {
@@ -603,6 +623,14 @@
                         //upload successful
                         $("#sendingFactDimmer").removeClass("active");
                         $("#factura_modal_dlg").modal('hide');
+
+                        let dias_aviso_factura = parseInt(params["dias_aviso_factura"]);
+
+                        if (day > dias_aviso_factura) {
+                            $('.contentImportante').html(params["dias_factura_aviso"]);
+                            $('#importante_modal_dlg').modal('show');
+                        }
+
                         getTotalMonth(focusDate._d);
                         console.log("upload successful!");
                         console.log(data);
@@ -612,6 +640,14 @@
                         //upload failed
                         $("#sendingFactDimmer").removeClass("active");
                         $("#factura_modal_dlg").modal('hide');
+                        let hoy = moment();
+                        let day = parseInt(hoy.format('D'));
+                        let dias_aviso_factura = parseInt(params["dias_aviso_factura"]);
+                        if (day > dias_aviso_factura) {
+                            $('.contentImportante').html(params["dias_factura_aviso"]);
+                            $('#importante_modal_dlg').modal('show');
+                        }
+
                         getTotalMonth(focusDate._d);
                         console.log("upload error: " + error.name + ": " + error.message);
                     }
@@ -741,6 +777,66 @@
 
             });
 
+
+            //botones check de supervision
+            $("#supervision").checkbox({
+                onChecked: function () {
+                    enviarTarea(2);
+                },
+                onUnchecked: function () {
+                    eliminarTarea();
+                }
+            });
+
+            $("#coordinacion").checkbox({
+                onChecked: function () {
+                    enviarTarea(3);
+                },
+                onUnchecked: function () {
+                    eliminarTarea();
+                }
+            });
+
+            $("#coorsup").checkbox({
+                onChecked: function () {
+                    enviarTarea(4);
+                },
+                onUnchecked: function () {
+                    eliminarTarea();
+                }
+            });
+
+            //botones check de docencia
+            $("#docencia1").checkbox({
+                onChecked: function () {
+                    enviarTarea(5);
+                },
+                onUnchecked: function () {
+                    tareaEspId = id_doc_niv;
+                    eliminarTarea();
+                }
+            });
+
+            $("#docencia2").checkbox({
+                onChecked: function () {
+                    enviarTarea(6);
+                },
+                onUnchecked: function () {
+                    tareaEspId = id_doc_gen;
+                    eliminarTarea();
+                }
+            });
+
+            $("#docencia3").checkbox({
+                onChecked: function () {
+                    enviarTarea(7);
+                },
+                onUnchecked: function () {
+                    tareaEspId = id_doc_otros;
+                    eliminarTarea();
+                }
+            });
+
         });
 
         // Get a value from the querystring
@@ -851,7 +947,7 @@
             let user = JSON.parse(localStorage.getItem('user'));
 
             //Mostramos u ocultamos las tareas de coordinacion, supervision y docencia
-            permisos = user["permisos"].split(',');
+            let permisos = user["permisos"].split(',');
 
             let typeCal = "day";
 
@@ -884,11 +980,24 @@
                     eventDates: events,
                     maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
                     onSelect(date, mode) {
-                        focusDate = moment(date);
-                        localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
-                        let formatted_date = formatDate(date);
-                        let url = `/visitas.html?date=${formatted_date}&pac=${pac}`;
-                        window.location = url;
+                        let user = JSON.parse(localStorage.getItem('user'));
+
+                        //Mostramos u ocultamos las tareas de coordinacion, supervision y docencia
+                        let permisos = user["permisos"].split(',');
+
+                        //Si no carga horarios, ponemos el modo mes
+                        if (permisos[3] == "1") {
+                            focusDate = moment(date);
+                            localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
+                            getTotalMonth(focusDate._d);
+                            return;
+                        } else {
+                            focusDate = moment(date);
+                            localStorage.setItem("focusDate", focusDate.format("YYYY-MM-DDTHH:mm:ss"));
+                            let formatted_date = formatDate(date);
+                            let url = `/visitas.html?date=${formatted_date}&pac=${pac}`;
+                            window.location = url;
+                        }
                     },
                     className: {
                         prevIcon: '',
@@ -921,6 +1030,86 @@
                     return res.json(); //error here
                 }).then(function (data) {
                     presentationData = data;
+
+                    //Si docencia esta en 1, entonces deshabilitamos el resto.
+                    if (presentationData["docencia"] == 1) {
+                        $("#l_supervision").hide();
+                        $("#l_coordinacion").hide();
+                        $("#l_coorsup").hide();
+                        $("#l_docencia1").show();
+                        $("#l_docencia2").show();
+                        $("#l_docencia3").show();
+
+                        //segun lo que vino en los totales, chequeamos o deschequeamos
+                        $("#docencia1").checkbox("set unchecked");
+                        $("#docencia2").checkbox("set unchecked");
+                        $("#docencia3").checkbox("set unchecked");
+                        $("#docencia1").removeClass("disabled");
+                        $("#docencia2").removeClass("disabled");
+                        $("#docencia3").removeClass("disabled");
+
+
+                        if (presentationData["tiene_doc_niv"] == "S") {
+                            id_doc_niv = presentationData["id_doc_niv"];
+                            $("#docencia1").checkbox("set checked");
+                        }
+                        if (presentationData["tiene_doc_gen"] == "S") {
+                            id_doc_gen = presentationData["id_doc_gen"];
+                            $("#docencia2").checkbox("set checked");
+                        }
+                        if (presentationData["tiene_doc_otros"] == "S") {
+                            id_doc_otros = presentationData["id_doc_otros"];
+                            $("#docencia3").checkbox("set checked");
+                        }
+
+                    } else {
+                        $("#l_supervision").show();
+                        $("#l_coordinacion").show();
+                        $("#l_coorsup").show();
+                        $("#l_docencia1").hide();
+                        $("#l_docencia2").hide();
+                        $("#l_docencia3").hide();
+
+                        //segun lo que vino en los totales, chequeamos o deschequeamos
+                        if (presentationData["tiene_coord"] == "S") {
+                            tareaEspId = presentationData["id_tarea_esp"];
+                            $("#coordinacion").checkbox("set checked");
+                            $("#supervision").checkbox("set unchecked");
+                            $("#coorsup").checkbox("set unchecked");
+                            //Si selecciono uno, deshabilitamos los otros
+                            $("#coordinacion").removeClass("disabled");
+                            $("#supervision").addClass("disabled");
+                            $("#coorsup").addClass("disabled");
+                        } else if (presentationData["tiene_sup"] == "S") {
+                            tareaEspId = presentationData["id_tarea_esp"];
+                            $("#coordinacion").checkbox("set unchecked");
+                            $("#supervision").checkbox("set checked");
+                            $("#coorsup").checkbox("set unchecked");
+                            //Si selecciono uno, deshabilitamos los otros
+                            $("#coordinacion").addClass("disabled");
+                            $("#supervision").removeClass("disabled");
+                            $("#coorsup").addClass("disabled");
+                        } else if (presentationData["tiene_coordsup"] == "S") {
+                            tareaEspId = presentationData["id_tarea_esp"];
+                            $("#coordinacion").checkbox("set unchecked");
+                            $("#supervision").checkbox("set unchecked");
+                            $("#coorsup").checkbox("set checked");
+                            //Si selecciono uno, deshabilitamos los otros
+                            $("#coordinacion").addClass("disabled");
+                            $("#supervision").addClass("disabled");
+                            $("#coorsup").removeClass("disabled");
+                        } else {
+                            $("#coordinacion").checkbox("set unchecked");
+                            $("#supervision").checkbox("set unchecked");
+                            $("#coorsup").checkbox("set unchecked");
+
+                            $("#coordinacion").removeClass("disabled");
+                            $("#supervision").removeClass("disabled");
+                            $("#coorsup").removeClass("disabled");
+                        }
+
+                    }
+
                     //Si vinieron horas o hay tareas especiales
                     if (data.total_hs || data.total_pagar_tareas > 0) {
                         $(".sumario").show();
@@ -932,6 +1121,14 @@
                     }
 
                     let sumarioHoras = `Total de horas: ${data["total_hs"]}hs Total: $${data["total_pagar"]} <i class="custom circular info icon"></i>`;
+                    let horasInternacion = '';
+
+                    if (data["valor_hora_ds_int"] != null) {
+                        horasInternacion = `<b>Valores Internacion</b><br>
+                                        Dias de semana $${data["valor_hora_ds_int"]}<br>
+                                        Fines de semana $${data["valor_hora_fs_int"]}<br>
+                                        Feriados $${data["valor_hora_fe_int"]}<br>`;
+                    }
 
                     sumarioHoras = sumarioHoras.replace(/\./g, ',');
                     $("#summarioHoras").html(sumarioHoras);
@@ -944,7 +1141,8 @@
                                     <b>Valores</b><br>
                                     Dias de semana $${data["valor_hora_ds"]}<br>
                                     Fines de semana $${data["valor_hora_fs"]}<br>
-                                    Feriados $${data["valor_hora_fe"]}<br>`;
+                                    Feriados $${data["valor_hora_fe"]}<br>
+                                    ${horasInternacion}`;
 
                     sumarioHoras = sumarioHoras.replace(/\./g, ',');
                     $("#summarioHorasDetalle").html(sumarioHoras);
@@ -969,6 +1167,13 @@
                         $("#presentar_horarios").hide();
                         $("#descargar_horarios").show();
 
+                        $("#coordinacion").addClass("disabled");
+                        $("#supervision").addClass("disabled");
+                        $("#coorsup").addClass("disabled");
+                        $("#docencia1").addClass("disabled");
+                        $("#docencia2").addClass("disabled");
+                        $("#docencia3").addClass("disabled");
+
                         //Si ya se presento el horario, habilitar la carga de factura
                         if (data.factura == "S") {
                             $("#descargar_factura").hide();
@@ -986,10 +1191,15 @@
                                 $("#presentar_informe").addClass("disabled");
                                 $(".informe_label").addClass("green");
                             } else {
-                                $("#descargar_informe").hide();
-                                $("#presentar_informe").show();
-                                $("#presentar_informe").removeClass("disabled");
-                                $(".informe_label").addClass("blue");
+                                if (presentationData["docencia"] == 1) {
+                                    $("#descargar_informe").hide();
+                                    $("#presentar_informe").hide();
+                                } else {
+                                    $("#descargar_informe").hide();
+                                    $("#presentar_informe").show();
+                                    $("#presentar_informe").removeClass("disabled");
+                                    $(".informe_label").addClass("blue");
+                                }
                             }
 
                         } else {
@@ -1012,7 +1222,6 @@
                         $(".fact_label").addClass("grey");
                         $(".informe_label").addClass("grey");
                     }
-
                 });
 
         }
@@ -1047,7 +1256,8 @@
                     let day = parseInt(hoy.format('D'));
                     let dias_aviso = parseInt(params["dias_aviso_presentacion"]);
 
-                    if (dias_aviso >= day) {
+                    if (day > dias_aviso) {
+                        $('.contentImportante').html(params["dias_presentacion_aviso"]);
                         $('#importante_modal_dlg').modal('show');
                     }
 
@@ -1115,6 +1325,69 @@
         function setCalFocusDate() {
             $('#inline_calendar').calendar('set focusDate', focusDate._d);
             $('#inline_calendar').calendar('set date', focusDate._d);
+        }
+
+        function enviarTarea(tipo) {
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            desde = focusDate.format("YYYY-MM-DD HH:mm");
+            hasta = focusDate.format("YYYY-MM-DD HH:mm");
+
+            let raw = JSON.stringify({ "id_at": user.id, "id_pac": pac, "type": tipo, "desde": desde, "hasta": hasta, "intern": false });
+
+            let requestOptions = {
+                method: 'POST',
+                headers: getMyHeader(),
+                body: raw,
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/visitas.php`;
+
+            $("#message").hide();
+            $("#savingDimmer").addClass("active");
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    return res.json(); //error here
+                }).then(function (data) {
+                    getTotalMonth(focusDate._d);
+                    return true;
+                }).catch((error) => {
+                    return false;
+                });
+            return false;
+        }
+
+        function eliminarTarea() {
+            if (tareaEspId == null) {
+                return;
+            }
+            let user = JSON.parse(localStorage.getItem('user'));
+
+            let requestOptions = {
+                method: 'DELETE',
+                headers: getMyHeader(),
+                redirect: 'follow'
+            };
+
+            let url = `${apiUrl}/visitas.php?id=${tareaEspId}`;
+
+            $("#message").hide();
+            console.log(url);
+
+            $("#savingDimmer").addClass("active");
+            fetch(url, requestOptions)
+                .then(function (res) {
+                    getTotalMonth(focusDate._d);
+                    return res.json();
+                }).then(function (data) {
+                    getTotalMonth(focusDate._d);
+                    return true;
+                }).catch((error) => {
+                    console.log(error);
+                    return false;
+                });
+            return true;
         }
     </script>
 

@@ -48,12 +48,7 @@
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      if (localStorage.getItem("bienvenido") === null) {
-        window.location.href = "bienvenido.html";
-      } else if (localStorage.getItem("perfil") === null) {
-        window.location.href = "pacientes.html";
-      } else {
-        if (localStorage.getItem("user") === null) {
+      if (localStorage.getItem("user") === null) {
           window.location.href = "login.html";
         } else {
           let user = JSON.parse(localStorage.getItem("user"));
@@ -67,7 +62,6 @@
             window.location.href = "pacientes.html";
           }
         }
-      }
     });
   </script>
 </body>

@@ -247,11 +247,7 @@
                     if (user.jwt != undefined) {
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem('user', JSON.stringify(user));
-                        if (localStorage.getItem("profile") === null) {
-                            window.location.href = "profile.html";
-                        } else {
-                            window.location.href = "pacientes.html";
-                        }
+                        window.location.href = "pacientes.html";
                     }
 
                     return user;
