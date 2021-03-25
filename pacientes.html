@@ -106,6 +106,8 @@
             <form id="informe_form" class="ui form">
                 <h4>Info paciente:</h4>
                 <div class="field">
+                    <p id="infoPart">-</p>
+                    <h4>Info. contactos</h4>
                     <p id="infoPaciente">-</p>
                     <p id="infoTerapeuta">-</p>
                 </div>
@@ -209,6 +211,7 @@
                             return res.json(); //error here
                         }).then(function (data) {
                             $("#comentarios").val(data[0]["comentarios"]);
+                            $("#infoPart").html(`<b>Telefono: </b>${data[0]["nombre_familiar"]} Direccion: ${data[0]["direccion"]}`);
                             $("#infoPaciente").html(`<b>Familiar: </b>${data[0]["nombre_familiar"]} (${data[0]["telefono_familiar"]})`);
                             $("#infoTerapeuta").html(`<b>Terapeuta: </b>${data[0]["nombre_terapeuta"]} (${data[0]["telefono_terapeuta"]})`);
                             return;
