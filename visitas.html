@@ -572,8 +572,14 @@
             let horahasta = parseInt(valhasta.split(":")[0]);
             let minuhasta = parseInt(valhasta.split(":")[1]);
 
+            let esMediaNoche = (horahasta == 0 && minuhasta == 0);
+
             let timeStart = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), horadesde, minudesde, 0);
             let timeEnd = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), horahasta, minuhasta, 0);
+
+            if(horahasta == 0 && minuhasta == 0) {
+                timeEnd.setDate(timeEnd.getDate() + 1);
+            } 
 
             timeStart = roundTimeQuarterHour(timeStart);
             timeEnd = roundTimeQuarterHour(timeEnd);
@@ -643,13 +649,21 @@
             let horahasta = parseInt(valhasta.split(":")[0]);
             let minuhasta = parseInt(valhasta.split(":")[1]);
 
+            let esMediaNoche = (horahasta == 0 && minuhasta == 0);
+
             let timeStart = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), horadesde, minudesde, 0);
             let timeEnd = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), horahasta, minuhasta, 0);
+
+            //Si la hora hasta es medianoche, lo ponemos como el siguiente dia
+            if(horahasta == 0 && minuhasta == 0) {
+                timeEnd.setDate(timeEnd.getDate() + 1);
+            } 
 
             if (moment(timeEnd).isBefore(timeStart, 'time')) {
                 $("#aviso").show();
                 $("#avisoMensaje").html("El horario hasta no puede ser menor a desde.");
                 $("#guardar_btn").addClass("disabled");
+                return false;
             } else {
                 $("#guardar_btn").removeClass("disabled");
             }
