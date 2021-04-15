@@ -1288,6 +1288,16 @@
                 }).then(function (data) {
                     $("#sendingInfDimmer").removeClass("active");
                     $("#informe_modal_dlg").modal('hide');
+
+                    let hoy = moment();
+                    let day = parseInt(hoy.format('D'));
+                    let dias_aviso = parseInt(params["dias_aviso_informe"]);
+
+                    if (day > dias_aviso) {
+                        $('.contentImportante').html(params["dias_informe_aviso"]);
+                        $('#importante_modal_dlg').modal('show');
+                    }
+
                     getTotalMonth(focusDate._d);
                     return;
                 }).catch((error) => {
