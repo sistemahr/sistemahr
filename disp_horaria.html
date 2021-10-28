@@ -34,13 +34,27 @@
             left: 0;
         }
 
+        div.scrollable {
+            width: 100%;
+            height: 80%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: center;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
         .column {
-            margin: 10px;
+            margin-top: 0;
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding-top: 0;
         }
     </style>
 </head>
 
-<body class="dimmable">
+<body >
     <div class="ui borderless menu">
         <div class="menu">
             <a onclick="window.history.back();" class="item">
@@ -49,36 +63,38 @@
         </div>
     </div>
 
-    <div class="ui middle aligned left aligned grid">
-        <div class="column">
-            <div class="row">
-                <div class="ui dimmer cargando_horarios">
-                    <div class="ui text loader">Cargando horarios</div>
-                </div>
-                <h2>Disponibilidad Horaria Semanal</h2>
-                <h4 id="ult_act">Ultima actualizacion: </h4>
-                <div class="ui vertical icon menu fluid">
-                    <a href="disp_horaria_edit_day.html?dsem=1" class="item">
-                        <h3 id="lunes">Lunes</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=2" class="item">
-                        <h3 id="martes">Martes</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=3" class="item">
-                        <h3 id="miercoles">Miercoles</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=4" class="item">
-                        <h3 id="jueves">Jueves</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=5" class="item">
-                        <h3 id="viernes">Viernes</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=6" class="item">
-                        <h3 id="sabado">Sabado</h3>
-                    </a>
-                    <a href="disp_horaria_edit_day.html?dsem=7" class="item">
-                        <h3 id="domingo">Domingo</h3>
-                    </a>
+    <div class="scrollable">
+        <div class="ui middle aligned left aligned grid">
+            <div class="column">
+                <div class="row">
+                    <div class="ui dimmer cargando_horarios">
+                        <div class="ui text loader">Cargando horarios</div>
+                    </div>
+                    <h2>Disponibilidad Horaria Semanal</h2>
+                    <span id="ult_act">Ultima actualizacion: </span>
+                    <div class="ui vertical icon menu fluid">
+                        <a href="disp_horaria_edit_day.html?dsem=1" class="item">
+                            <h5 id="lunes">Lunes</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=2" class="item">
+                            <h5 id="martes">Martes</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=3" class="item">
+                            <h5 id="miercoles">Miercoles</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=4" class="item">
+                            <h5 id="jueves">Jueves</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=5" class="item">
+                            <h5 id="viernes">Viernes</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=6" class="item">
+                            <h5 id="sabado">Sabado</h5>
+                        </a>
+                        <a href="disp_horaria_edit_day.html?dsem=7" class="item">
+                            <h5 id="domingo">Domingo</h5>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
