@@ -295,9 +295,12 @@
                     //Chequeamos si hay pacientes
                     if (data.length > 0) {
                         for (i in data) {
+                            let tiene_esquema = Number(data[i]["tiene_esquema"]) > 0 ? `<i data-id="${data[i]["id_pac"]}" class="large green week calendar esquema_horario_at alternate icon"></i> <i data-id="${data[i]["id_pac"]}" class="large orange calendar esquema_horario alternate icon"></i>` : '';
+
                             let elementTxt = `<a href="calendar.html?pac=${data[i]["id_pac"]}" class="item">
                                 <div class="right floated content">
-                                <i data-id="${data[i]["id_pac"]}" class="edit notas_paciente outline icon"></i>
+                                ${tiene_esquema}
+                                <i data-id="${data[i]["id_pac"]}" class="large edit notas_paciente outline icon"></i>
                                 </div>
                                 <i class="large blue user middle aligned icon"></i>
                                 <div class="content">
@@ -313,6 +316,21 @@
                             pac = e.target.dataset.id;
 
                             $("#comentarios_modal_dlg").modal('show');
+                        });
+
+                        $(".esquema_horario").click(function (e) {
+                            e.preventDefault();
+
+                            pac = e.target.dataset.id;
+                            localStorage.setItem("pac",pac);
+
+                            window.location.href = "esquema.html?pac=" + pac;
+                        });
+
+                        $(".esquema_horario_at").click(function (e) {
+                            e.preventDefault();
+
+                            window.location.href = `esquema.html?pac=${pac}&at=true`;
                         });
                     } else {
                         $("#aviso_sin_pacientes").show();
