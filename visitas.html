@@ -579,6 +579,8 @@
 
             if(horahasta == 0 && minuhasta == 0) {
                 timeEnd.setDate(timeEnd.getDate() + 1);
+                //Le restamos un segundo
+                timeEnd.setSeconds(timeEnd.getSeconds() - 1);
             } 
 
             timeStart = roundTimeQuarterHour(timeStart);
@@ -657,6 +659,8 @@
             //Si la hora hasta es medianoche, lo ponemos como el siguiente dia
             if(horahasta == 0 && minuhasta == 0) {
                 timeEnd.setDate(timeEnd.getDate() + 1);
+                //Le restamos un segundo
+                timeEnd.setSeconds(timeEnd.getSeconds() - 1);
             } 
 
             if (moment(timeEnd).isBefore(timeStart, 'time')) {
