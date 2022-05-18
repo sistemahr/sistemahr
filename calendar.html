@@ -418,11 +418,12 @@
             $("#summarioHoras1").hide();
 
             //Si selecciono fecha, la guardamos
-            if (localStorage.getItem("pac") !== null) {
+            pac = findGetParameter("pac")
+
+            if (pac === null) {
                 pac = localStorage.getItem("pac");
-            } else {
-                pac = findGetParameter("pac");
             }
+            
             if (pac === null) {
                 //Si es llamado sin parametro o no esta en localStorage, deslogueamos
                 localStorage.removeItem("user");
