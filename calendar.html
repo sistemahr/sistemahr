@@ -690,7 +690,8 @@
             });
 
             $('#informe').keyup(function () {
-                var max = 5000;
+                //var max = 5000;
+                let max = params["max_car_informe"];
                 var len = $(this).val().length;
                 if (len >= max) {
                     $('#charnum').text(' Superaste el limite');
